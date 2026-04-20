@@ -4,3 +4,8 @@
 # Neovim machine-specific state
 dot_config/nvim/lazy-lock.json
 dot_config/nvim/.luarc.json
+
+# PowerShell profile only deploys on Windows
+{{ if ne .chezmoi.os "windows" }}
+Documents/
+{{ end }}

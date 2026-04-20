@@ -1,0 +1,22 @@
+{{ if eq .chezmoi.os "windows" -}}
+#!/usr/bin/env pwsh
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+$modules = @(
+{{ range .packages.windows.powershell_modules -}}
+    "{{ . }}",
+{{ end -}}
+  $null
+)
+
+foreach ($mod in $modules) {
+    if ($null -eq $mod) { continue }
+    if (Get-Module -ListAvailable -Name $mod) {
+        Write-Host "==> PS module already installed: $mod"
+    } else {
+        Write-Host "==> Installing PS module: $mod"
+        Install-Module -Name $mod -Scope CurrentUser -Force -AllowClobber -Repository PSGallery
+    }
+}
+{{ end -}}

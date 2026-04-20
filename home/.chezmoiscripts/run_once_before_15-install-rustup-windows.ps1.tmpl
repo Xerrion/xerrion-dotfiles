@@ -1,0 +1,21 @@
+{{ if eq .chezmoi.os "windows" -}}
+#!/usr/bin/env pwsh
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+if (Get-Command rustup -ErrorAction SilentlyContinue) {
+    Write-Host "==> rustup already installed"
+} else {
+    Write-Host "==> Installing rustup..."
+    $url = 'https://win.rustup.rs/x86_64'
+    $dest = Join-Path $env:TEMP 'rustup-init.exe'
+    Invoke-WebRequest -Uri $url -OutFile $dest -UseBasicParsing
+    & $dest -y --default-toolchain stable --component rustfmt,clippy,rust-analyzer
+    Remove-Item $dest -Force
+    # Note: rustup-init updates the user PATH permanently; new shells pick it up.
+}
+
+# Idempotent component add for existing installs
+Write-Host "==> Ensuring rustup components: rustfmt, clippy, rust-analyzer"
+rustup component add rustfmt clippy rust-analyzer
+{{ end -}}

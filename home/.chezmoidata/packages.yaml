@@ -57,7 +57,6 @@ windows:
     - nodejs
     - bun
     - python
-    - rustup
     - eza
     - fzf
     - zoxide
@@ -80,6 +79,7 @@ windows:
     - Noto-NF
   winget:
     - { id: AgileBits.1Password, name: 1Password }
+    - { id: GnuPG.Gpg4win, name: Gpg4win }
     - { id: Kong.Insomnia, name: Insomnia }
     - { id: JetBrains.Toolbox, name: JetBrains Toolbox }
     - { id: ProtonTechnologies.ProtonVPN, name: ProtonVPN }

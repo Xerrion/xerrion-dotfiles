@@ -1,0 +1,56 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Managed by chezmoi - do not edit directly
+
+# --- XDG for Neovim / tools expecting $HOME/.config ---
+if (-not $env:XDG_CONFIG_HOME) {
+    $env:XDG_CONFIG_HOME = Join-Path $HOME '.config'
+}
+
+# --- Non-secret MCP config ---
+$env:SONARQUBE_ORG = "xerrion"
+$env:SONARQUBE_CLOUD_URL = "https://sonarcloud.io"
+$env:SONARQUBE_IDE_PORT = "64120"
+$env:SERVICENOW_MCP_TOOL_PACKAGE = "full"
+$env:SERVICENOW_MCP_PROD_INSTANCE_URL = "https://tv2prod.service-now.com"
+$env:SERVICENOW_MCP_PROD_ENV = "prod"
+$env:SERVICENOW_MCP_DEV_INSTANCE_URL = "https://tv2dev.service-now.com"
+$env:SERVICENOW_MCP_DEV_ENV = "dev"
+
+# --- 1Password-backed secrets (requires `op` CLI on PATH and signed in) ---
+$env:GITHUB_MCP_TOKEN = "{{ onepasswordRead "op://Private/github-mcp-pat/credential" }}"
+$env:SONARQUBE_TOKEN = "{{ onepasswordRead "op://Private/sonarqube-token/credential" }}"
+$env:SERVICENOW_MCP_USERNAME = "{{ onepasswordRead "op://Work/ServiceNow LASN Dev/username" }}"
+$env:SERVICENOW_MCP_DEV_PASSWORD = "{{ onepasswordRead "op://Work/ServiceNow LASN Dev/password" }}"
+$env:SERVICENOW_MCP_PROD_PASSWORD = "{{ onepasswordRead "op://Work/ServiceNow LASN Prod/password" }}"
+
+# --- Shell Integrations ---
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
+}
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+}
+
+# --- Modules ---
+Import-Module Terminal-Icons -ErrorAction SilentlyContinue
+Import-Module PSFzf -ErrorAction SilentlyContinue
+if (Get-Module PSFzf) {
+    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
+}
+
+# --- PSReadLine ---
+Set-PSReadLineOption -PredictionSource History
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineOption -EditMode Emacs
+
+# --- Aliases ---
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    Set-Alias -Name ls -Value eza -Option AllScope
+}
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name cat -Value bat -Option AllScope
+}
+if (Get-Command lazygit -ErrorAction SilentlyContinue) {
+    Set-Alias -Name lg -Value lazygit -Option AllScope
+}
+{{- end -}}

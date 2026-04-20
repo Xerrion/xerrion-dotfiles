@@ -9,14 +9,22 @@
 	signingkey = 2582074D715AAABF
 [commit]
 	gpgsign = true
+[tag]
+	gpgsign = true
+	forceSignAnnotated = true
+{{ if eq .chezmoi.os "darwin" -}}
 [gpg]
 	format = openpgp
 	program = /opt/homebrew/bin/gpg
 [gpg "ssh"]
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
-[tag]
-	gpgsign = true
-	forceSignAnnotated = true
+{{ else if eq .chezmoi.os "windows" -}}
+[gpg]
+	format = openpgp
+	program = gpg.exe
+[gpg "ssh"]
+	program = C:/Users/{{ .chezmoi.username }}/AppData/Local/1Password/app/8/op-ssh-sign.exe
+{{ end -}}
 [core]
 	pager = delta
 [interactive]

@@ -1,0 +1,28 @@
+{{ if eq .chezmoi.os "windows" -}}
+#!/usr/bin/env pwsh
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+if (Get-Command scoop -ErrorAction SilentlyContinue) {
+    Write-Host "==> Scoop already installed"
+    return
+}
+Write-Host "==> Installing Scoop..."
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+
+# Add buckets
+foreach ($bucket in @(
+{{ range .packages.windows.scoop_buckets -}}
+    "{{ . }}",
+{{ end -}}
+  $null
+)) {
+    if ($null -eq $bucket) { continue }
+    if ((scoop bucket list).Name -contains $bucket) {
+        Write-Host "==> Scoop bucket already added: $bucket"
+    } else {
+        Write-Host "==> Adding scoop bucket: $bucket"
+        scoop bucket add $bucket
+    }
+}
+{{ end -}}

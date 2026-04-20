@@ -1,0 +1,29 @@
+{{ if eq .chezmoi.os "windows" -}}
+#!/usr/bin/env pwsh
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version Latest
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Write-Warning "winget not found; skipping GUI app install. Install App Installer from Microsoft Store to enable."
+    return
+}
+
+$apps = @(
+{{ range .packages.windows.winget -}}
+    @{ Id = "{{ .id }}"; Name = "{{ .name }}" },
+{{ end -}}
+  $null
+)
+
+foreach ($app in $apps) {
+    if ($null -eq $app) { continue }
+    # winget list exits 0 if found, non-zero if not. Use --exact to avoid partial matches.
+    $null = winget list --exact --id $app.Id --accept-source-agreements 2>$null
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "==> Already installed: $($app.Name)"
+    } else {
+        Write-Host "==> Installing: $($app.Name) ($($app.Id))"
+        winget install --exact --id $app.Id --accept-package-agreements --accept-source-agreements --silent
+    }
+}
+{{ end -}}
