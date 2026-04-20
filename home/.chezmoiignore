@@ -5,7 +5,20 @@
 dot_config/nvim/lazy-lock.json
 dot_config/nvim/.luarc.json
 
-# PowerShell profile only deploys on Windows
+# Zed local state (prompts LMDB, installed themes) - never manage via chezmoi.
+# Patterns match target (destination) paths, not source-state names.
+.config/zed/prompts/
+.config/zed/themes/
+AppData/Roaming/Zed/prompts/
+AppData/Roaming/Zed/themes/
+
+# PowerShell profile + Windows-only Zed path
 {{ if ne .chezmoi.os "windows" }}
 Documents/
+AppData/
+{{ end }}
+
+# macOS/Linux-only Zed path: exclude on Windows so only the AppData copy lands
+{{ if eq .chezmoi.os "windows" }}
+.config/zed/
 {{ end }}

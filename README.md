@@ -143,6 +143,19 @@ Package additions, script tweaks, and OS defaults are straightforward:
 - New dotfile: drop it under `home/` with the `dot_` prefix (e.g. `dot_gitignore_global`). Use `.tmpl` suffix to enable templating.
 - New script: add to `home/.chezmoiscripts/` following the numeric-prefix convention above.
 
+## Editor integrations
+
+### Zed (cross-OS)
+
+Zed settings are single-sourced at `home/.chezmoitemplates/zed-settings.json` and deployed to the OS-correct path via two thin template stubs:
+
+- macOS and Linux: `home/dot_config/zed/settings.json.tmpl` -> `~/.config/zed/settings.json`
+- Windows: `home/AppData/Roaming/Zed/settings.json.tmpl` -> `%APPDATA%\Zed\settings.json`
+
+Both stubs include the shared body with `{{ template "zed-settings.json" . }}`, so edits to the template propagate to every platform. `.chezmoiignore` hides the inactive tree per OS (the Windows path on macOS/Linux, and vice versa) and also excludes Zed's local `prompts/` (LMDB) and `themes/` directories, which are machine state, not configuration.
+
+The content is opinionated: Catppuccin (Latte/Macchiato, system-following), FiraCode Nerd Font with ligatures, format-on-save, inline git blame, inlay hints, `opencode` agent server, and Copilot Chat as the assistant default. No vim mode.
+
 ## iTerm2 color scheme
 
 The Catppuccin Macchiato iTerm2 preset lives at [`assets/catppuccin-macchiato.itermcolors`](assets/catppuccin-macchiato.itermcolors). To import:

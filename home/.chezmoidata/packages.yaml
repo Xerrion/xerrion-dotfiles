@@ -41,6 +41,8 @@ packages:
     fonts:
       - font-caskaydia-cove-nerd-font
       - font-caskaydia-mono-nerd-font
+      - font-fira-code-nerd-font
+      - font-inter
       - font-jetbrains-mono-nerd-font
       - font-noto-nerd-font
 
@@ -76,6 +78,7 @@ packages:
     fonts:
       - CaskaydiaCove-NF
       - CaskaydiaMono-NF
+      - FiraCode-NF
       - JetBrainsMono-NF
       - Noto-NF
     winget:
@@ -84,6 +87,7 @@ packages:
       - { id: Kong.Insomnia, name: Insomnia }
       - { id: JetBrains.Toolbox, name: JetBrains Toolbox }
       - { id: ProtonTechnologies.ProtonVPN, name: ProtonVPN }
+      - { id: SIL.Inter, name: Inter }
       - { id: SlackTechnologies.Slack, name: Slack }
     scoop_gui:
       - 1password-cli
