@@ -1,0 +1,69 @@
+name: CI
+
+# Validates that chezmoi templates render without syntax errors or undefined
+# variables.
+#
+# Limitation: chezmoi detects the runner's real OS, so this job only exercises
+# the Linux execution path of each template. However, Go's text/template engine
+# parses the *entire* template before executing it, so syntax errors inside
+# {{ if eq .chezmoi.os "darwin" }} / "windows" branches are still caught here.
+# Genuine runtime validation of the darwin/windows branches would require
+# matrix runners on macos-latest and windows-latest; we accept the Linux-only
+# parse check as a pragmatic tradeoff.
+#
+# 1Password CLI is not available in CI. We stub `op` with a script that echoes
+# a dummy value so every `onepasswordRead` call renders successfully.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  render-templates:
+    name: Render chezmoi templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install chezmoi
+        run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+
+      - name: Stub 1Password CLI
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          cat > "$HOME/.local/bin/op" <<'EOF'
+          #!/usr/bin/env bash
+          # CI stub for the 1Password CLI. `onepasswordRead` invokes
+          # `op read <ref>` internally; we unconditionally emit a dummy value
+          # so templates render without real credentials.
+          if [ "$1" = "read" ]; then
+            echo "ci-dummy-secret"
+            exit 0
+          fi
+          # Any other subcommand (signin, whoami, etc.) gets a harmless stub.
+          echo "ci-dummy"
+          exit 0
+          EOF
+          chmod +x "$HOME/.local/bin/op"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify stubs on PATH
+        run: |
+          which chezmoi
+          which op
+          chezmoi --version
+          op read "op://dummy/dummy/dummy"
+
+      - name: Render templates (dry-run apply)
+        run: |
+          chezmoi init --source="$GITHUB_WORKSPACE" \
+            --promptString git.name=ci \
+            --promptString git.email=ci@example.com
+          # --verbose is safe ONLY while the op stub returns dummy values.
+          # Do NOT use real 1Password secrets here - verbose output prints rendered file contents.
+          chezmoi apply --dry-run --verbose
