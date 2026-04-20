@@ -5,7 +5,20 @@ return {
     name = "catppuccin",
     lazy = false,
     priority = 1000,
-    opts = {},
+    opts = {
+      flavour = "macchiato",
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        notify = true,
+        mini = true,
+        lsp_trouble = true,
+        telescope = true,
+        which_key = true,
+      },
+    },
   },
 
   -- Nord (alternative)
@@ -19,7 +32,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      colorscheme = "catppuccin-macchiato",
     },
   },
 }

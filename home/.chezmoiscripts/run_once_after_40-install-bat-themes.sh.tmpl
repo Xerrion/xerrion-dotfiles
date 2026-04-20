@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+{{ if or (eq .chezmoi.os "darwin") (eq .chezmoi.os "linux") -}}
+THEMES_DIR="${HOME}/.config/bat/themes"
+mkdir -p "${THEMES_DIR}"
+BASE_URL="https://raw.githubusercontent.com/catppuccin/bat/main/themes"
+for flavor in "Catppuccin Frappe" "Catppuccin Latte" "Catppuccin Macchiato" "Catppuccin Mocha"; do
+  encoded="${flavor// /%20}"
+  dest="${THEMES_DIR}/${flavor}.tmTheme"
+  if [ ! -f "${dest}" ]; then
+    echo "==> Downloading ${flavor} bat theme..."
+    curl -fsSL -o "${dest}" "${BASE_URL}/${encoded}.tmTheme"
+  fi
+done
+if command -v bat >/dev/null 2>&1; then
+  echo "==> Rebuilding bat theme cache..."
+  bat cache --build >/dev/null
+fi
+{{- end }}
