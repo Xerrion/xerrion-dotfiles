@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+echo "==> Applying macOS defaults..."
+
+# Close any open System Settings panes, to prevent them from overriding
+# settings we're about to change. ("System Settings" on Ventura+, was
+# "System Preferences" prior to macOS 13.)
+osascript -e 'tell application "System Settings" to quit' 2>/dev/null || true
+osascript -e 'tell application "System Preferences" to quit' 2>/dev/null || true
+
+##############################################################################
+# Trackpad
+##############################################################################
+# Tap to click - built-in trackpad
+defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
+# Tap to click - Bluetooth / Magic Trackpad
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+# Tap to click - login screen + keep System Settings UI in sync
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+
+# Three-finger drag (built-in + Bluetooth). Disables three-finger Mission
+# Control swipe; use four fingers instead.
+defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+
+# Tracking speed (0 = slowest, 3 = fastest; UI maxes at 3.0, CLI accepts higher)
+defaults write NSGlobalDomain com.apple.trackpad.scaling -float 1.5
+
+##############################################################################
+# Keyboard
+##############################################################################
+# Disable press-and-hold accent popup, enable key repeat everywhere.
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
+# Fast key repeat
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 25
+
+# Full keyboard access: Tab through all controls
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 2
+
+# Disable auto-correct and "smart" text substitutions
+defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+
+##############################################################################
+# Screenshots
+##############################################################################
+mkdir -p "$HOME/Screenshots"
+defaults write com.apple.screencapture location -string "$HOME/Screenshots"
+defaults write com.apple.screencapture type -string "png"
+defaults write com.apple.screencapture disable-shadow -bool true
+
+##############################################################################
+# Dock
+##############################################################################
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock autohide-delay -float 0
+defaults write com.apple.dock autohide-time-modifier -float 0.4
+defaults write com.apple.dock tilesize -int 48
+defaults write com.apple.dock mineffect -string "scale"
+defaults write com.apple.dock show-recents -bool false
+defaults write com.apple.dock mru-spaces -bool false
+defaults write com.apple.dock minimize-to-application -bool true
+
+##############################################################################
+# Finder
+##############################################################################
+defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder ShowStatusBar -bool true
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+chflags nohidden "$HOME/Library" 2>/dev/null || true
+defaults write com.apple.finder NewWindowTarget -string "PfHm"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+##############################################################################
+# Menu bar / Clock
+##############################################################################
+defaults write com.apple.menuextra.clock DateFormat -string "EEE d MMM HH:mm"
+defaults write com.apple.menuextra.clock Show24Hour -bool true
+defaults -currentHost write com.apple.controlcenter BatteryShowPercentage -bool true
+
+##############################################################################
+# Safari
+##############################################################################
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write com.apple.Safari.SandboxBroker ShowDevelopMenu -bool true 2>/dev/null || \
+  echo "  (Safari SandboxBroker write skipped - grant Terminal Full Disk Access to enable Develop menu fully.)"
+
+##############################################################################
+# TextEdit
+##############################################################################
+defaults write com.apple.TextEdit RichText -int 0
+defaults write com.apple.TextEdit PlainTextEncoding -int 4
+defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
+
+##############################################################################
+# Activity Monitor
+##############################################################################
+defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
+defaults write com.apple.ActivityMonitor IconType -int 5
+defaults write com.apple.ActivityMonitor ShowCategory -int 0
+defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
+defaults write com.apple.ActivityMonitor SortDirection -int 0
+
+##############################################################################
+# Security / misc (preserved from original)
+##############################################################################
+defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+##############################################################################
+# Apply: flush prefs cache, reload trackpad, restart affected UI processes
+##############################################################################
+/System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
+
+killall cfprefsd        2>/dev/null || true
+killall Finder          2>/dev/null || true
+killall Dock            2>/dev/null || true
+killall SystemUIServer  2>/dev/null || true
+killall ControlCenter   2>/dev/null || true
+
+echo "==> macOS defaults applied. A logout/reboot is recommended for a few knobs."
+{{- end }}
