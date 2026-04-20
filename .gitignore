@@ -1,0 +1,20 @@
+# chezmoi local state / secrets
+.chezmoi.toml
+.chezmoi.toml.local
+*.secret
+*.key
+*.pem
+id_rsa*
+id_ed25519*
+id_ecdsa*
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# editor
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,12 @@
+# External git repositories pulled in by chezmoi apply.
+# Replaces traditional git submodules.
+# refreshPeriod = "168h" means re-fetch at most once per week.
+
+[".oh-my-zsh/custom/plugins/zsh-autosuggestions"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-autosuggestions.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/plugins/zsh-autosuggestions".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/plugins/zsh-autosuggestions".pull]
+        args = ["--ff-only"]

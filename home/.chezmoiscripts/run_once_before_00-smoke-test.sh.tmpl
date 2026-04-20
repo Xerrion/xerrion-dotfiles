@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Smoke test: confirms chezmoi executes scripts in the expected order and
+# that template rendering works. Safe no-op. Will be removed in Phase 9.
+
+set -euo pipefail
+
+echo "chezmoi smoke test"
+echo "  os:           {{ .chezmoi.os }}"
+echo "  arch:         {{ .chezmoi.arch }}"
+echo "  hostname:     {{ .chezmoi.hostname }}"
+echo "  username:     {{ .chezmoi.username }}"
+echo "  homeDir:      {{ .chezmoi.homeDir }}"
+echo "  sourceDir:    {{ .chezmoi.sourceDir }}"
+echo "  executable:   {{ .chezmoi.executable }}"

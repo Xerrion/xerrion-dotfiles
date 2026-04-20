@@ -1,0 +1,14 @@
+# Single source of truth for packages across macOS and Windows.
+# Populated during Phase 5 of migration.
+
+darwin:
+  taps: []
+  brews: []
+  casks: []
+  fonts: []
+
+windows:
+  scoop_buckets: []
+  scoop: []
+  winget: []
+  fonts: []

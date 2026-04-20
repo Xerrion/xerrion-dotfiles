@@ -1,0 +1,2 @@
+# Patterns for files that chezmoi should NOT manage.
+# One glob per line. Supports negation with !.
