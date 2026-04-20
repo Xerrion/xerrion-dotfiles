@@ -1,0 +1,7 @@
+# zsh environment - sourced for ALL zsh invocations (login, interactive, scripts).
+# Keep this minimal and idempotent.
+
+# Rust toolchain (rustup-installed)
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi

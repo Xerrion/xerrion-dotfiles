@@ -1,0 +1,149 @@
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+export BUN_INSTALL="$HOME/.bun"
+export ZSH="$HOME/.oh-my-zsh"
+export HOMEBREW_NO_ENV_HINTS=1
+export ZSH_THEME="catppuccin"
+export CATPPUCCIN_FLAVOR="mocha"
+export CATPPUCCIN_SHOW_TIME=true
+{{ if eq .chezmoi.os "darwin" -}}
+export DOTNET_ROOT="/opt/homebrew/opt/dotnet/libexec"
+export PATH="/opt/homebrew/opt/dotnet@8/bin:$BUN_INSTALL/bin:$PATH"
+{{- else -}}
+export PATH="$BUN_INSTALL/bin:$PATH"
+{{- end }}
+
+# Zsh-specific setup
+if [[ -n "$ZSH_VERSION" ]]; then
+{{ if eq .chezmoi.os "darwin" -}}
+  # Homebrew zsh completions (must come before compinit/Oh-My-Zsh)
+  fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+
+{{ end -}}
+  # bun completions
+  [[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
+
+  # Oh-My-Zsh plugins
+  plugins=(git ssh-agent zsh-bat zsh-autosuggestions fast-syntax-highlighting)
+  [[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
+fi
+
+# Alias ls to eza for a prettier version
+alias ls="eza -l --header --git --git-repos"
+alias la="eza -la --header --git --git-repos"
+alias lt="eza --tree --level=2 --git"
+alias tree="eza --tree --git"
+
+# Bat aliases (better cat)
+alias cat="bat --paging=never"
+alias catp="bat"  # with paging
+
+# Git shortcuts
+alias lg="lazygit"
+alias gs="git status"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias gp="git push"
+alias gl="git pull"
+alias gf="git fetch --all --prune"
+
+# Quick navigation
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+
+# Misc
+alias reload="source ~/.zshrc"
+alias zshrc="$EDITOR ~/.zshrc"
+
+# PATH additions
+export PATH="\
+{{ if eq .chezmoi.os "darwin" -}}
+/opt/homebrew/opt/coreutils/libexec/gnubin:\
+/opt/homebrew/opt/binutils/bin:\
+{{ end -}}
+{{ .chezmoi.homeDir }}/.codeium/windsurf/bin:\
+$HOME/.local/bin:\
+$HOME/go/bin:\
+{{ .chezmoi.homeDir }}/.lmstudio/bin:\
+{{ if eq .chezmoi.os "darwin" -}}
+/Applications/Visual Studio Code.app/Contents/Resources/app/bin:\
+{{ end -}}
+$PATH"
+
+# Initialize starship prompt
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+export GPG_TTY=$(tty)
+
+# ===== Cool Tools Integration =====
+
+# fzf - fuzzy finder
+source <(fzf --zsh)
+export FZF_DEFAULT_OPTS="
+  --height=40%
+  --layout=reverse
+  --border=rounded
+  --preview-window=right:60%:wrap
+  --bind='ctrl-p:toggle-preview'
+  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
+  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+  --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || eza -la {}'"
+
+# Mac Nordic friendly keybindings (Alt produces special chars, so we use alternatives)
+# Ctrl+O = fuzzy cd (replaces Alt+C which doesn't work on Nordic)
+bindkey -s '^o' 'zi\n'
+
+# Ctrl+F = fuzzy find files (alternative to Ctrl+T if preferred)
+bindkey -s '^f' 'fzf --preview "bat --color=always {}" | xargs -I {} $EDITOR {}\n'
+
+# zoxide - smarter cd (use 'z' instead of 'cd')
+eval "$(zoxide init zsh)"
+alias cd="z"
+
+# atuin - magical shell history (Ctrl+R)
+eval "$(atuin init zsh --disable-up-arrow)"
+
+# direnv - auto-load .envrc files per project
+eval "$(direnv hook zsh)"
+
+# mise - polyglot version manager (node, python, etc)
+eval "$(mise activate zsh)"
+
+{{ if eq .chezmoi.os "darwin" -}}
+# forgit - fzf + git (ga for add, glo for log, gd for diff, etc)
+[[ -f /opt/homebrew/opt/forgit/share/forgit/forgit.plugin.zsh ]] && source /opt/homebrew/opt/forgit/share/forgit/forgit.plugin.zsh
+
+{{ end -}}
+# broot - tree navigator (br to launch)
+[[ -f ~/.config/broot/launcher/bash/br ]] && source ~/.config/broot/launcher/bash/br
+
+# ===== Welcome Screen =====
+# Show welcome screen on new interactive shells (not in scripts, vscode, etc)
+if [[ $- == *i* ]] && [[ -z "$VSCODE_SHELL_INTEGRATION" ]] && [[ -z "$INSIDE_EMACS" ]] && [[ -z "$OPENCODE" ]]; then
+  [[ -f {{ .chezmoi.homeDir }}/.config/zsh/welcome.zsh ]] && source {{ .chezmoi.homeDir }}/.config/zsh/welcome.zsh
+fi
+
+# --- MCP server configuration (non-secret) ---
+export SONARQUBE_ORG="xerrion"
+export SONARQUBE_CLOUD_URL="https://sonarcloud.io"
+export SONARQUBE_IDE_PORT="64120"
+export SERVICENOW_MCP_TOOL_PACKAGE="full"
+export SERVICENOW_MCP_PROD_INSTANCE_URL="https://tv2prod.service-now.com"
+export SERVICENOW_MCP_PROD_ENV="prod"
+export SERVICENOW_MCP_DEV_INSTANCE_URL="https://tv2dev.service-now.com"
+export SERVICENOW_MCP_DEV_ENV="dev"
+
+{{ if eq .chezmoi.os "darwin" -}}
+# --- MCP server secrets (resolved via 1Password at apply time) ---
+export GITHUB_MCP_TOKEN="{{ onepasswordRead "op://Private/github-mcp-pat/credential" }}"
+export SONARQUBE_TOKEN="{{ onepasswordRead "op://Private/sonarqube-token/credential" }}"
+export SERVICENOW_MCP_USERNAME="{{ onepasswordRead "op://Work/ServiceNow LASN Dev/username" }}"
+export SERVICENOW_MCP_DEV_PASSWORD="{{ onepasswordRead "op://Work/ServiceNow LASN Dev/password" }}"
+export SERVICENOW_MCP_PROD_PASSWORD="{{ onepasswordRead "op://Work/ServiceNow LASN Prod/password" }}"
+{{- end }}

@@ -1,2 +1,6 @@
 # Patterns for files that chezmoi should NOT manage.
 # One glob per line. Supports negation with !.
+
+# Neovim machine-specific state
+dot_config/nvim/lazy-lock.json
+dot_config/nvim/.luarc.json
