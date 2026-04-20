@@ -26,6 +26,12 @@ if [[ -n "$ZSH_VERSION" ]]; then
   # Oh-My-Zsh plugins
   plugins=(git ssh-agent zsh-bat zsh-autosuggestions fast-syntax-highlighting)
   [[ -f "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
+
+  # Catppuccin syntax highlighting colors (requires zsh-syntax-highlighting plugin
+  # or fast-syntax-highlighting; sourced from chezmoi external).
+  _cat_sh_theme="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/catppuccin-syntax-highlighting/themes/catppuccin_${CATPPUCCIN_FLAVOR:-mocha}-zsh-syntax-highlighting.zsh"
+  [[ -f "$_cat_sh_theme" ]] && source "$_cat_sh_theme"
+  unset _cat_sh_theme
 fi
 
 # Alias ls to eza for a prettier version

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+if ! command -v rustup >/dev/null 2>&1; then
+  echo "==> Installing rustup (stable toolchain + rustfmt + clippy + rust-analyzer)..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --default-toolchain stable \
+      --component rustfmt --component clippy --component rust-analyzer
+else
+  echo "==> rustup already installed; ensuring components..."
+  rustup component add rustfmt clippy rust-analyzer
+fi
+{{- end }}

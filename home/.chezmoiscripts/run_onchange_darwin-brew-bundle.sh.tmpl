@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+{{ template "brew-shellenv.sh" . }}
+
+if ! command -v brew >/dev/null 2>&1; then
+  echo "==> ERROR: Homebrew not found. run_once_before_10-install-homebrew.sh should have run first." >&2
+  exit 1
+fi
+
+echo "==> Running brew bundle..."
+
+brew bundle --file=/dev/stdin <<'EOF'
+{{ range .packages.darwin.taps -}}
+tap "{{ . }}"
+{{ end }}
+{{- range .packages.darwin.brews -}}
+brew "{{ . }}"
+{{ end }}
+{{- range .packages.darwin.casks -}}
+cask "{{ . }}"
+{{ end }}
+{{- range .packages.darwin.fonts -}}
+cask "{{ . }}"
+{{ end }}
+EOF
+{{- end }}

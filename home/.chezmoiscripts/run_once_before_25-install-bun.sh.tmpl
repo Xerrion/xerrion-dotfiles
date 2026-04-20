@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+# Install bun via official installer to ~/.bun (matches $BUN_INSTALL in dot_zshrc.tmpl).
+if command -v bun >/dev/null 2>&1; then
+  echo "==> bun already installed ($(bun --version))."
+  exit 0
+fi
+
+echo "==> Installing bun via official installer..."
+curl -fsSL https://bun.sh/install | bash
+{{- end }}

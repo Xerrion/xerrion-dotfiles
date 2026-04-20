@@ -1,14 +1,94 @@
-# Single source of truth for packages across macOS and Windows.
-# Populated during Phase 5 of migration.
+# Declarative package manifests consumed by run_onchange_ scripts.
+# Adding/removing entries here triggers reinstall on next `chezmoi apply`
+# because the rendered scripts hash changes.
 
 darwin:
-  taps: []
-  brews: []
-  casks: []
-  fonts: []
+  taps:
+    - anomalyco/tap
+  brews:
+    # Core CLI
+    - git
+    - bat
+    - btop
+    - python
+    # Shell plugins (also provided as git externals where needed)
+    - zsh-completions
+    # Modern CLI replacements
+    - eza           # ls replacement
+    - fzf           # fuzzy finder
+    - zoxide        # smarter cd
+    - atuin         # shell history search
+    - lazygit       # git TUI
+    - git-delta     # git diff pager
+    - broot         # tree navigator
+    - direnv        # per-dir env
+    - mise          # runtime version manager
+    - forgit        # fzf + git
+    - starship      # prompt
+    - anomalyco/tap/opencode  # AI coding agent
+  casks:
+    - wezterm
+    - 1password
+    - 1password-cli
+    - gpg-suite
+    - marta
+    - opencode-desktop
+    - orbstack
+    - slack
+    - time-out
+    - zed
+  fonts:
+    - font-caskaydia-cove-nerd-font
+    - font-caskaydia-mono-nerd-font
+    - font-jetbrains-mono-nerd-font
+    - font-noto-nerd-font
 
 windows:
-  scoop_buckets: []
-  scoop: []
-  winget: []
-  fonts: []
+  # Populated in Phase 8; stubbed here so scripts can iterate safely.
+  scoop_buckets:
+    - extras
+    - nerd-fonts
+    - versions
+  scoop:
+    - git
+    - neovim
+    - bat
+    - btop
+    - nodejs
+    - bun
+    - python
+    - rustup
+    - eza
+    - fzf
+    - zoxide
+    - atuin
+    - lazygit
+    - delta
+    - broot
+    - direnv
+    - mise
+    - starship
+    - opencode
+    - ripgrep
+    - fd
+    - tree-sitter
+    - curl
+  fonts:
+    - CaskaydiaCove-NF
+    - CaskaydiaMono-NF
+    - JetBrainsMono-NF
+    - Noto-NF
+  winget:
+    - { id: AgileBits.1Password, name: 1Password }
+    - { id: Kong.Insomnia, name: Insomnia }
+    - { id: JetBrains.Toolbox, name: JetBrains Toolbox }
+    - { id: ProtonTechnologies.ProtonVPN, name: ProtonVPN }
+    - { id: SlackTechnologies.Slack, name: Slack }
+  scoop_gui:
+    - 1password-cli
+    - flutter
+    - zed
+  powershell_modules:
+    - Terminal-Icons
+    - PSFzf
+    - PSReadLine
