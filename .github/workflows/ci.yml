@@ -59,17 +59,26 @@ jobs:
           chezmoi --version
           op read "op://dummy/dummy/dummy"
 
+      - name: Seed chezmoi config
+        # promptStringOnce in home/.chezmoi.toml.tmpl tries to open /dev/tty,
+        # which fails on CI runners even when --promptString flags are passed.
+        # Pre-writing the config with git.name/git.email under [data.git] causes
+        # promptStringOnce to find the values already set and skip prompting.
+        run: |
+          mkdir -p "$HOME/.config/chezmoi"
+          cat > "$HOME/.config/chezmoi/chezmoi.toml" <<'EOF'
+          [data.git]
+              name = "ci"
+              email = "ci@example.com"
+          EOF
+
       - name: Render templates (dry-run apply)
         run: |
-          chezmoi init --source="$GITHUB_WORKSPACE" \
-            --promptString git.name=ci \
-            --promptString git.email=ci@example.com
+          chezmoi init --apply --source="$GITHUB_WORKSPACE"
           # --verbose is safe ONLY while the op stub returns dummy values.
           # Do NOT use real 1Password secrets here - verbose output prints rendered file contents.
-          # Pass --promptString to apply as well: promptStringOnce re-evaluates
-          # during apply and may not pick up the config written by init on CI
-          # runners without a TTY.
+          # No --promptString needed: the "Seed chezmoi config" step above wrote
+          # git.name/git.email into ~/.config/chezmoi/chezmoi.toml before init,
+          # so promptStringOnce finds the values and returns them without prompting.
           chezmoi apply --dry-run --verbose \
-            --source="$GITHUB_WORKSPACE" \
-            --promptString git.name=ci \
-            --promptString git.email=ci@example.com
+            --source="$GITHUB_WORKSPACE"
