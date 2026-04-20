@@ -74,7 +74,7 @@ jobs:
 
       - name: Render templates (dry-run apply)
         run: |
-          chezmoi init --apply --source="$GITHUB_WORKSPACE"
+          chezmoi init --source="$GITHUB_WORKSPACE"
           # --verbose is safe ONLY while the op stub returns dummy values.
           # Do NOT use real 1Password secrets here - verbose output prints rendered file contents.
           # No --promptString needed: the "Seed chezmoi config" step above wrote
