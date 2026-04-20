@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install chezmoi
         run: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
@@ -66,4 +66,10 @@ jobs:
             --promptString git.email=ci@example.com
           # --verbose is safe ONLY while the op stub returns dummy values.
           # Do NOT use real 1Password secrets here - verbose output prints rendered file contents.
-          chezmoi apply --dry-run --verbose
+          # Pass --promptString to apply as well: promptStringOnce re-evaluates
+          # during apply and may not pick up the config written by init on CI
+          # runners without a TTY.
+          chezmoi apply --dry-run --verbose \
+            --source="$GITHUB_WORKSPACE" \
+            --promptString git.name=ci \
+            --promptString git.email=ci@example.com
