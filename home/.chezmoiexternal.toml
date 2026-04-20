@@ -2,6 +2,10 @@
 # Replaces traditional git submodules.
 # refreshPeriod = "168h" means re-fetch at most once per week.
 
+# ---------------------------------------------------------------------------
+# Oh-My-Zsh plugins
+# ---------------------------------------------------------------------------
+
 [".oh-my-zsh/custom/plugins/zsh-autosuggestions"]
     type = "git-repo"
     url = "https://github.com/zsh-users/zsh-autosuggestions.git"
@@ -9,4 +13,73 @@
     [".oh-my-zsh/custom/plugins/zsh-autosuggestions".clone]
         args = ["--depth=1"]
     [".oh-my-zsh/custom/plugins/zsh-autosuggestions".pull]
+        args = ["--ff-only"]
+
+[".oh-my-zsh/custom/plugins/zsh-syntax-highlighting"]
+    type = "git-repo"
+    url = "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/plugins/zsh-syntax-highlighting".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/plugins/zsh-syntax-highlighting".pull]
+        args = ["--ff-only"]
+
+[".oh-my-zsh/custom/plugins/fast-syntax-highlighting"]
+    type = "git-repo"
+    url = "https://github.com/zdharma-continuum/fast-syntax-highlighting.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/plugins/fast-syntax-highlighting".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/plugins/fast-syntax-highlighting".pull]
+        args = ["--ff-only"]
+
+[".oh-my-zsh/custom/plugins/zsh-bat"]
+    type = "git-repo"
+    url = "https://github.com/fdellwing/zsh-bat.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/plugins/zsh-bat".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/plugins/zsh-bat".pull]
+        args = ["--ff-only"]
+
+# ---------------------------------------------------------------------------
+# Oh-My-Zsh themes
+# ---------------------------------------------------------------------------
+# catppuccin theme self-locates flavors via ${0:A:h}, so cloning the whole
+# repo into themes/catppuccin/ lets ZSH_THEME=catppuccin resolve to
+# themes/catppuccin/catppuccin.zsh-theme.
+
+[".oh-my-zsh/custom/themes/catppuccin"]
+    type = "git-repo"
+    url = "https://github.com/JannoTjarks/catppuccin-zsh.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/themes/catppuccin".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/themes/catppuccin".pull]
+        args = ["--ff-only"]
+
+# Theme overlay for zsh-syntax-highlighting (sourced manually from zshrc,
+# not an omz plugin). Destination renamed to fix the original typo
+# "zsh-syntaxt-highlighting-catpuccin".
+[".oh-my-zsh/custom/themes/catppuccin-syntax-highlighting"]
+    type = "git-repo"
+    url = "https://github.com/catppuccin/zsh-syntax-highlighting.git"
+    refreshPeriod = "168h"
+    [".oh-my-zsh/custom/themes/catppuccin-syntax-highlighting".clone]
+        args = ["--depth=1"]
+    [".oh-my-zsh/custom/themes/catppuccin-syntax-highlighting".pull]
+        args = ["--ff-only"]
+
+# ---------------------------------------------------------------------------
+# Private repositories (SSH auth required)
+# ---------------------------------------------------------------------------
+# Requires a working ssh-agent with a key authorized for github.com:Xerrion.
+
+[".config/opencode"]
+    type = "git-repo"
+    url = "git@github.com:Xerrion/opencode.git"
+    refreshPeriod = "168h"
+    [".config/opencode".clone]
+        args = ["--depth=1"]
+    [".config/opencode".pull]
         args = ["--ff-only"]
