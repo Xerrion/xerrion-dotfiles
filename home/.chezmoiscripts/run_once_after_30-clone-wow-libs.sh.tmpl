@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: git not found on PATH; cannot clone WoW dev libraries" >&2
+  exit 1
+fi
+
+annotations_dir="${HOME}/.local/share/wow-annotations"
+elvui_dir="${HOME}/.local/share/wow-libs/ElvUI"
+
+if [[ -d "${annotations_dir}/.git" ]]; then
+  echo "==> Already cloned: ${annotations_dir}"
+else
+  echo "==> Cloning vscode-wow-api into ${annotations_dir}..."
+  mkdir -p "$(dirname "${annotations_dir}")"
+  git clone --recurse-submodules --depth=1 \
+    https://github.com/Ketho/vscode-wow-api.git "${annotations_dir}"
+fi
+
+if [[ -d "${elvui_dir}/.git" ]]; then
+  echo "==> Already cloned: ${elvui_dir}"
+else
+  echo "==> Cloning ElvUI into ${elvui_dir}..."
+  mkdir -p "$(dirname "${elvui_dir}")"
+  git clone --depth=1 \
+    https://github.com/tukui-org/ElvUI.git "${elvui_dir}"
+fi
+{{- end }}
