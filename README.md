@@ -46,6 +46,56 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')} -- init --apply Xerrion/xerrion-dotf
 
 On first apply, chezmoi will prompt for `git.name` and `git.email` (see [Customization](#customization)).
 
+## Daily workflow
+
+chezmoi keeps a source directory at `~/.local/share/chezmoi/` and applies it to your home directory. Every edit flows through the source, then `chezmoi apply` writes to the live location. Push the source repository to back up.
+
+### Editing a tracked file
+
+There are two common flows:
+
+- Flow A (edit through chezmoi): `chezmoi edit ~/.zshrc` then `chezmoi diff` then `chezmoi apply`.
+- Flow B (edit live, sync back): `vim ~/.zshrc` then `chezmoi re-add ~/.zshrc`.
+
+Note: use Flow A for templated files (`.tmpl`), Flow B for plain files when you want to see effects immediately.
+
+### Adding a new file to track
+
+`chezmoi add ~/path/to/file` pulls the file into the source directory. Follow with a commit and push.
+
+### Committing and pushing (this is the backup)
+
+The canonical loop:
+
+```bash
+chezmoi cd
+git status
+git add -A
+git commit -m "feat: ..."
+git push
+exit
+```
+
+If it is not in `git push`, it is not backed up.
+
+### Syncing another machine
+
+`chezmoi update` pulls from origin and applies in one step.
+
+### Common commands
+
+| Goal | Command |
+| - | - |
+| Edit tracked file | `chezmoi edit ~/.zshrc` |
+| Preview pending changes | `chezmoi diff` |
+| Apply source to home | `chezmoi apply` |
+| Pull live edits back | `chezmoi re-add ~/file` |
+| Start tracking new file | `chezmoi add ~/file` |
+| Stop tracking | `chezmoi forget ~/file` |
+| Jump to source dir | `chezmoi cd` |
+| Sync from GitHub | `chezmoi update` |
+| Health check | `chezmoi doctor` |
+
 ## Architecture
 
 ### Repository layout
