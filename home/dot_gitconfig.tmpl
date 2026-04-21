@@ -6,24 +6,21 @@
 [user]
 	name = {{ .git.name | quote }}
 	email = {{ .git.email | quote }}
-	signingkey = 2582074D715AAABF
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICbPCNEKCY+IcUPpQl5zJ3XIG2PhCpNOOBoTeihH3Iou
 [commit]
 	gpgsign = true
 [tag]
 	gpgsign = true
 	forceSignAnnotated = true
-{{ if eq .chezmoi.os "darwin" -}}
 [gpg]
-	format = openpgp
-	program = /opt/homebrew/bin/gpg
+	format = ssh
 [gpg "ssh"]
+{{ if eq .chezmoi.os "darwin" -}}
 	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 {{ else if eq .chezmoi.os "windows" -}}
-[gpg]
-	format = openpgp
-	program = gpg.exe
-[gpg "ssh"]
 	program = C:/Users/{{ .chezmoi.username }}/AppData/Local/1Password/app/8/op-ssh-sign.exe
+{{ else if eq .chezmoi.os "linux" -}}
+	program = /opt/1Password/op-ssh-sign
 {{ end -}}
 [core]
 	pager = delta
