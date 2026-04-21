@@ -92,6 +92,7 @@ packages:
     scoop_gui:
       - 1password-cli
       - flutter
+      - wezterm
       - zed
     powershell_modules:
       - Terminal-Icons

@@ -165,6 +165,24 @@ The Catppuccin Mocha iTerm2 preset lives at [`assets/catppuccin-mocha.itermcolor
 3. Choose "Import..." and select the file
 4. Reopen the dropdown and select "catppuccin-mocha"
 
+## Manual theme steps
+
+A few tools can't be themed via dotfiles and need manual one-time setup:
+
+### Slack
+
+Open Slack > Preferences > Themes > Import theme > paste:
+
+```
+#1E1E2E,#181825,#CBA6F7,#1E1E2E,#11111B,#CDD6F4,#CBA6F7,#EBA0AC,#1E1E2E,#CDD6F4
+```
+
+Values are Catppuccin Mocha. Source: https://github.com/catppuccin/slack
+
+### OpenCode
+
+Catppuccin is built into OpenCode. In the TUI, run `/theme` and pick `catppuccin` (Mocha flavor). No file changes needed.
+
 ## Troubleshooting
 
 Run `chezmoi doctor` first. It verifies chezmoi version, git, required binaries (op, brew, scoop), template dependencies, and destination permissions. Most issues surface there.
