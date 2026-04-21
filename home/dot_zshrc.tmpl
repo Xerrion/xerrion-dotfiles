@@ -155,4 +155,7 @@ export SONARQUBE_TOKEN="{{ onepasswordRead "op://Private/sonarqube-token/credent
 export SERVICENOW_MCP_USERNAME="{{ onepasswordRead "op://Work/ServiceNow LASN Dev/username" }}"
 export SERVICENOW_MCP_DEV_PASSWORD="{{ onepasswordRead "op://Work/ServiceNow LASN Dev/password" }}"
 export SERVICENOW_MCP_PROD_PASSWORD="{{ onepasswordRead "op://Work/ServiceNow LASN Prod/password" }}"
+export ATLASSIAN_API_TOKEN="{{ onepasswordRead "op://Work/atlassian-mcp/credential" }}"
+export ATLASSIAN_USERNAME="{{ onepasswordRead "op://Work/atlassian-mcp/username" }}"
+export ATLASSIAN_URL_BASE="{{ onepasswordRead "op://Work/atlassian-mcp/website" }}"
 {{- end }}
