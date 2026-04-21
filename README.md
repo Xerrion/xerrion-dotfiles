@@ -154,16 +154,16 @@ Zed settings are single-sourced at `home/.chezmoitemplates/zed-settings.json` an
 
 Both stubs include the shared body with `{{ template "zed-settings.json" . }}`, so edits to the template propagate to every platform. `.chezmoiignore` hides the inactive tree per OS (the Windows path on macOS/Linux, and vice versa) and also excludes Zed's local `prompts/` (LMDB) and `themes/` directories, which are machine state, not configuration.
 
-The content is opinionated: Catppuccin (Latte/Macchiato, system-following), FiraCode Nerd Font with ligatures, format-on-save, inline git blame, inlay hints, `opencode` agent server, and Copilot Chat as the assistant default. No vim mode.
+The content is opinionated: Catppuccin (Latte/Mocha, system-following), FiraCode Nerd Font with ligatures, format-on-save, inline git blame, inlay hints, `opencode` agent server, and Copilot Chat as the assistant default. No vim mode.
 
 ## iTerm2 color scheme
 
-The Catppuccin Macchiato iTerm2 preset lives at [`assets/catppuccin-macchiato.itermcolors`](assets/catppuccin-macchiato.itermcolors). To import:
+The Catppuccin Mocha iTerm2 preset lives at [`assets/catppuccin-mocha.itermcolors`](assets/catppuccin-mocha.itermcolors). To import:
 
 1. iTerm2 > Settings (or Preferences) > Profiles > Colors
 2. Click the "Color Presets..." dropdown in the bottom right
 3. Choose "Import..." and select the file
-4. Reopen the dropdown and select "catppuccin-macchiato"
+4. Reopen the dropdown and select "catppuccin-mocha"
 
 ## Troubleshooting
 
